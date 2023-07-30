@@ -9,7 +9,6 @@ module Orders
     def invoke
       order_params = generate_order_params
       order = @order_service.invoke(**order_params)
-      
       return if order.blank?
         
       @order_line_service.invoke(order: order, **generate_order_line_params)
@@ -21,8 +20,8 @@ module Orders
       Faker::Config.locale = :ru
       {
         client_fullname: client_fullname,
-        client_email: client_fullname.split(' ').first + "@gmail.com",
-        client_phone_number: Faker::PhoneNumber.phone_number_with_country_code,
+        client_email: client_fullname.split(' ').first.downcase + "@gmail.com",
+        client_phone_number: Faker::PhoneNumber.phone_number_with_country_code, # +7 (929)114-53-31 in this format
         client_address: Faker::Address.street_address
       }
     end

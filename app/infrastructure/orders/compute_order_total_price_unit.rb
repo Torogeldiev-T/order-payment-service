@@ -3,6 +3,7 @@ module Orders
     def invoke(order)
       total_price = order.order_lines.map(&:total_price).sum
       order.update(total_amount: total_price)
+      order
     end
   end
 end

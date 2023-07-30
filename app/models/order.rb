@@ -7,4 +7,6 @@ class Order < ApplicationRecord
   STATUS_PROCESSING = 'processing'
   STATUS_PROCESSED_WITH_ERROR = 'processing error'
   STATUS_PAID = 'paid'
+
+  STATUSES = [STATUS_PENDING, STATUS_PROCESSING, STATUS_PROCESSED_WITH_ERROR, STATUS_PAID]
 end

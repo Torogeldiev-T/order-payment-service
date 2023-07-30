@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p><%= message.subject %></p>
+    <p>
+    Order details<br>
+    --------------------------
+    </p>
+    <p>Name: <%= @order.client_fullname %></p>
+    <p>Address: <%= @order.address %></p>
+    <p>Phone: <%= @order.client_phone_number %></p>
+  </body>
+</html>

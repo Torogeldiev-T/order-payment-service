@@ -2,6 +2,10 @@ require 'rails_helper'
 
 RSpec.describe Pages::Orders::List do
   describe '#invoke' do
+    before do
+      Order.destroy_all
+    end
+
     it "returns order data" do
       order = create(:order)
 

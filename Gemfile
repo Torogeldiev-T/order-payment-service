@@ -50,6 +50,9 @@ gem "bootsnap", require: false
 gem 'dotenv-rails'
 gem 'faker'
 gem 'pry', '~> 0.13.1'
+gem 'httpparty'
+gem 'tailwindcss-rails'
+gem 'certified'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -75,4 +78,5 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
   gem 'rails-controller-testing'
+  gem 'webmock'
 end

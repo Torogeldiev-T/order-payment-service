@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe OrdersController, type: :controller do
-  
-  
   describe '#index' do
     it 'returns orders' do
-      order_1 = create(:order)
+      Order.destroy_all
+
+      order_1 = create(:order, address: 'Umetailev st, 90')
       order_2 = create(:order, client_fullname: 'Soul Goodman') 
       
       get :index
@@ -31,7 +31,7 @@ RSpec.describe OrdersController, type: :controller do
             client_phone_number: order_2.client_phone_number,
             posted_at: order_2.posted_at,
             status: order_2.status,
-            total_amount: order_2.total_amount
+            total_amount: order_2.total_amount 
           }
         ]
       ) 
@@ -80,8 +80,86 @@ RSpec.describe OrdersController, type: :controller do
     end
   end
 
-  describe '#process_payment_request' do
-    it 'success' do
+  describe '#payment_process_request' do
+    Rails.application.load_tasks
+    Rake::Task['create_order'].invoke
+    
+    context 'success' do
+      let(:sberbank_response_body) do
+        {
+          orderId: 'UNIQUEID213',
+          formUrl: 'https://3dsec.sberbank.ru/payment/789/payment_ru.html?mdOrder=UNIQUEID213' 
+        }
+      end
+
+      before do
+        stub_request(:post, 'https://securepayments.sberbank.ru/payment/rest').to_return(status: 200, body: sberbank_response_body.to_json)
+      end 
+      
+      it 'registers order and redirects to formUrl' do
+        post :payment_process_request, params: { id: Order.last.id }
+        expect(response).to redirect_to('https://3dsec.sberbank.ru/payment/789/payment_ru.html?mdOrder=UNIQUEID213')
+      end
+
+      it 'sets order status to processing' do
+        post :payment_process_request, params: { id: Order.last.id }
+        expect(Order.last.status).to eq(Order::STATUS_PROCESSING)
+      end
+    end
+
+    context 'failure' do
+      let(:sberbank_response_error_body) do
+        {
+          errorCode: '123',
+          errorMessage: 'Something went wrong' 
+        }
+      end
+
+      before do
+        stub_request(:post, 'https://securepayments.sberbank.ru/payment/rest').to_return(status: 403, body: sberbank_response_error_body.to_json)
+      end 
+      
+      it 'redirects to root path' do
+        post :payment_process_request, params: { id: Order.last.id }
+        expect(flash[:error]).to match(/Something went wrong/)
+
+        expect(response).to redirect_to(root_path)
+        expect(Order.last.status).to eq(Order::STATUS_PENDING)
+      end
+    end
+  end
+
+  describe '#payment_process_callback' do
+    Rails.application.load_tasks
+    Rake::Task['create_order'].invoke
+    
+    context 'success' do
+      let(:sberbank_response_body) do
+        {
+          orderNumber: Order.last.id,
+          status: 1
+        }
+      end
+      
+      it 'sets status to paid and sends email' do
+        post :payment_process_callback, params: sberbank_response_body
+        expect(Order.last.status).to eq(Order::STATUS_PAID)
+      end 
+
+    end
+
+    context 'failure' do
+      let(:sberbank_response_body) do
+        {
+          orderNumber: Order.last.id,
+          status: 0
+        }
+      end
+
+      it 'sets status to error during processing and sends email' do
+        post :payment_process_callback, params: sberbank_response_body
+        expect(Order.last.status).to eq(Order::STATUS_PROCESSED_WITH_ERROR)
+      end
     end
   end
 end

@@ -4,8 +4,6 @@ Rails.application.load_tasks
 describe 'create_order.rake' do
   it 'creates new order with one order line' do
     Rake::Task['create_order'].invoke
-    expect(Order.count).to eq(1)
-    expect(OrderLine.count).to eq(1)
 
     order = Order.last
     order_line = OrderLine.last
