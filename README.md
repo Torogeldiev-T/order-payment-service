@@ -14,6 +14,7 @@ git clone https://github.com/Torogeldiev-T/order-payment-service.git
 cd order-payment-service
 bundle install
 rails db:setup
+bin/dev
 ```
 ## Run tests
 ```bash
