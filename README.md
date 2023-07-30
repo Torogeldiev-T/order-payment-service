@@ -13,6 +13,11 @@ Rake task creates order with random client data that can be viewed and paid
 git clone https://github.com/Torogeldiev-T/order-payment-service.git
 cd order-payment-service
 bundle install
+```
+Add .env file to the root of the project and provide database credentials
+for the fields DATABASE_USERNAME, DATABASE_PASSWORD
+and then run 
+```
 rails db:setup
 bin/dev
 ```
