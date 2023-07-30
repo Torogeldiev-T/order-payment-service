@@ -1,24 +1,28 @@
-# README
+# Order Payment Service
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This project was developed as test task
 
-Things you may want to cover:
+## About The Project
+Simple web application that emulates payment through Sberbank API.
+There is no real connection to the API, tests are covering payment service
 
-* Ruby version
+Rake task creates order with random client data that can be viewed and paid
 
-* System dependencies
+## Installation and Run
+```bash
+git clone https://github.com/Torogeldiev-T/order-payment-service.git
+cd order-payment-service
+bundle install
+rails db:setup
+```
+## Run tests
+```bash
+bundle exec rspec
+```
+## Run rake task to create order
+Rake task can be called from console through
+```bash
+rake create_order
+```
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Or throuh application itself
